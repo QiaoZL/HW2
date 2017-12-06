@@ -23,7 +23,6 @@ def pagerank (adjmatrix,beta = 0.85):
     print(outputnode)
     
     rankMatA = np.zeros([nnode,nnode])
-    rankMatB = (1/nnode) * np.ones([nnode,nnode])
         
     for rowindex in adjmatrix.index:
         rankMatA[adjmatrix.loc[rowindex,'j']-1, adjmatrix.loc[rowindex,'i']-1] = 1/groupsize[adjmatrix.loc[rowindex,'i']]
@@ -31,31 +30,28 @@ def pagerank (adjmatrix,beta = 0.85):
     print("original matrix:")
     print(rankMatA)
         
-    for rowindex in adjmatrix.index:  
-        if adjmatrix.loc[rowindex,'j'] not in outputnode:
-            rankMatA[:,adjmatrix.loc[rowindex,'j']-1] =  1/nnode   
+    #for rowindex in adjmatrix.index:  
+        #if adjmatrix.loc[rowindex,'j'] not in outputnode:
+            #rankMatA[:,adjmatrix.loc[rowindex,'j']-1] =  1/nnode
     
-    print("fixed matrix:")
-    print(rankMatA)
-    
-    print("3 basic matrixs, rankMatF = (beta)*rankMatA + (1-beta)*rankMatB:")
-    print("rankMatA:")
-    print(rankMatA)
-    print("rankMatB:")
-    print(rankMatB)
-    rankMatF = (beta)*rankMatA + (1-beta)*rankMatB
-    print("rankMatF:")
-    print(rankMatF)    
     
     iternum = 1
     rankMatOutput = np.eye(nnode)
     rankvector = rankvector.reshape((nnode,1))
     
+    adjustvector = []
+    for i in range(nnode):
+        adjustvector.append((1-beta)*(1/nnode))        
+    print("(1-beta)*e/n:")
+    print(adjustvector)
+    adjustvector = np.array(adjustvector)
+    adjustvector = adjustvector.reshape((nnode,1))
+    
     while 1 :
         rankvectorO = rankvector        
         
-        rankvector = np.dot(rankMatF,rankvector)
-        rankMatOutput = np.dot(rankMatF,rankMatOutput)
+        rankvector = beta*np.dot(rankMatA,rankvector) + adjustvector
+        rankMatOutput = np.dot(rankMatA,rankMatOutput)
         
         #print(rankvector)
         #print(rankvector == rankvectorO)
